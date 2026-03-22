@@ -22,7 +22,6 @@ if sys.platform == "win32":
     import mcp.server.stdio as mcp_stdio
     import anyio
     import anyio.lowlevel
-    from anyio.streams.memory import MemoryObjectReceiveStream, MemoryObjectSendStream
     import mcp.types as types
     from mcp.shared.message import SessionMessage
 
@@ -99,8 +98,6 @@ import traceback
 
 try:
     import win32file
-    import win32pipe
-    import win32con
     import pywintypes
     from mcp.server.fastmcp import FastMCP
 
