@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  lint-and-test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install black flake8
+          # Install project deps minus pywin32 (Windows-only)
+          grep -v pywin32 MCP_Server/requirements.txt | pip install -r /dev/stdin || true
+
+      - name: black (format check)
+        run: black --check MCP_Server/
+
+      - name: flake8 (lint)
+        run: flake8 MCP_Server/ --max-line-length=120 --extend-ignore=E203,W503
+
+      - name: pytest (if test files exist)
+        run: |
+          if find . -name "test_*.py" -o -name "*_test.py" | grep -q .; then
+            pip install pytest
+            pytest -v
+          else
+            echo "No test files found — skipping pytest"
+          fi
