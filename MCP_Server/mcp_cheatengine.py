@@ -237,6 +237,7 @@ class CEBridgeClient:
                 win32file.CloseHandle(self.handle)
             except Exception as e:
                 import sys
+
                 print(f"Close warning: {e}", file=sys.stderr)
             self.handle = None
 
