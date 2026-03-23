@@ -36,4 +36,4 @@ jobs:
       - name: pytest (if test files exist and importable)
         run: |
           pip install pytest
-          pytest -v --ignore=MCP_Server/test_mcp.py 2>/dev/null || echo "Tests skipped (Windows-only dependencies)"
+          pytest -v || echo "Tests skipped (Windows-only dependencies)"
