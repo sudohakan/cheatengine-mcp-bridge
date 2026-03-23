@@ -235,8 +235,9 @@ class CEBridgeClient:
         if self.handle:
             try:
                 win32file.CloseHandle(self.handle)
-            except:
-                pass
+            except Exception as e:
+                import sys
+                print(f"Close warning: {e}", file=sys.stderr)
             self.handle = None
 
 
@@ -639,13 +640,17 @@ def poll_dbvm_watch(address: str, max_results: int = 1000) -> str:
 
 @mcp.tool()
 def evaluate_lua(code: str) -> str:
-    """Execute arbitrary Lua code in Cheat Engine."""
+    """Execute arbitrary Lua code in Cheat Engine. WARNING: Executes code directly in the target process. Only use with verified inputs."""
+    if len(code) > 100000:
+        return {"error": "Code too large (max 100KB)"}
     return format_result(ce_client.send_command("evaluate_lua", {"code": code}))
 
 
 @mcp.tool()
 def auto_assemble(script: str) -> str:
-    """Run an AutoAssembler script (injection, code caves, etc)."""
+    """Run an AutoAssembler script (injection, code caves, etc). WARNING: Executes code directly in the target process. Only use with verified inputs."""
+    if len(script) > 100000:
+        return {"error": "Code too large (max 100KB)"}
     return format_result(ce_client.send_command("auto_assemble", {"script": script}))
 
 
