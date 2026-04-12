@@ -25,7 +25,7 @@ jobs:
           pip install --upgrade pip
           pip install black flake8
           # Install project deps minus pywin32 (Windows-only)
-          grep -v pywin32 MCP_Server/requirements.txt | pip install -r /dev/stdin || true
+          grep -v pywin32 MCP_Server/requirements.txt | pip install -r /dev/stdin
 
       - name: black (format check)
         run: black --check MCP_Server/
@@ -36,4 +36,4 @@ jobs:
       - name: pytest (if test files exist and importable)
         run: |
           pip install pytest
-          pytest -v || echo "Tests skipped (Windows-only dependencies)"
+          pytest -v

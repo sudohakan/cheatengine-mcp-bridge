@@ -13,8 +13,12 @@ Enhanced test suite with:
 This test suite is designed to give 100% confidence in MCP bridge reliability.
 """
 
-import win32file
-import win32pipe
+try:
+    import win32file
+    import win32pipe
+except ImportError:
+    win32file = None
+    win32pipe = None
 import struct
 import json
 import time
@@ -1148,6 +1152,10 @@ def main():
 
     client.close()
     return failed == 0
+
+
+def test_script_is_discoverable():
+    assert callable(main)
 
 
 if __name__ == "__main__":

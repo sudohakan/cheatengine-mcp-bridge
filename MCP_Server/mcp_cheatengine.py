@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 
 # ============================================================================
 # CRITICAL: WINDOWS LINE ENDING FIX FOR MCP (MONKEY-PATCH)
@@ -52,7 +53,17 @@ if sys.platform == "win32":
                         try:
                             message = types.JSONRPCMessage.model_validate_json(line)
                         except Exception as exc:
-                            await read_stream_writer.send(exc)
+                            await read_stream_writer.send(
+                                SessionMessage(
+                                    types.JSONRPCError(
+                                        jsonrpc="2.0",
+                                        id=0,
+                                        error=types.ErrorData(
+                                            code=-32700, message=str(exc)
+                                        ),
+                                    )
+                                )
+                            )
                             continue
                         session_message = SessionMessage(message)
                         await read_stream_writer.send(session_message)
@@ -130,6 +141,21 @@ def format_result(result):
         return result  # Already a string
     else:
         return json.dumps(result)
+
+
+_DANGEROUS_LUA_PATTERNS = (
+    r"\bos\.execute\b",
+    r"\bio\.open\b",
+    r"\bio\.popen\b",
+    r"\bloadfile\b",
+    r"\bdofile\b",
+    r"\bloadstring\b",
+    r"\bdebug\.",
+)
+
+
+def _contains_dangerous_lua(code: str) -> bool:
+    return any(re.search(pattern, code, re.IGNORECASE) for pattern in _DANGEROUS_LUA_PATTERNS)
 
 
 # ============================================================================
@@ -640,19 +666,47 @@ def poll_dbvm_watch(address: str, max_results: int = 1000) -> str:
 
 
 @mcp.tool()
-def evaluate_lua(code: str) -> str:
+def evaluate_lua(code: str, allow_unsafe: bool = False) -> str:
     """Execute arbitrary Lua code in Cheat Engine. WARNING: Executes code directly in the target process. Only use with verified inputs."""
     if len(code) > 100000:
-        return {"error": "Code too large (max 100KB)"}
-    return format_result(ce_client.send_command("evaluate_lua", {"code": code}))
-
+        return format_result({"success": False, "error": "Code too large (max 100KB)"})
+    if _contains_dangerous_lua(code):
+        return format_result(
+            {
+                "success": False,
+                "error": "Dangerous Lua APIs are blocked by semantic validation",
+            }
+        )
+    if not allow_unsafe:
+        return format_result(
+            {
+                "success": False,
+                "error": "Dangerous scripting is disabled by default. Pass allow_unsafe=true to proceed.",
+            }
+        )
+    return format_result(
+        ce_client.send_command(
+            "evaluate_lua", {"code": code, "allow_unsafe": allow_unsafe}
+        )
+    )
 
 @mcp.tool()
-def auto_assemble(script: str) -> str:
+def auto_assemble(script: str, allow_unsafe: bool = False) -> str:
     """Run an AutoAssembler script (injection, code caves, etc). WARNING: Executes code directly in the target process. Only use with verified inputs."""
     if len(script) > 100000:
-        return {"error": "Code too large (max 100KB)"}
-    return format_result(ce_client.send_command("auto_assemble", {"script": script}))
+        return format_result({"success": False, "error": "Code too large (max 100KB)"})
+    if not allow_unsafe:
+        return format_result(
+            {
+                "success": False,
+                "error": "Dangerous scripting is disabled by default. Pass allow_unsafe=true to proceed.",
+            }
+        )
+    return format_result(
+        ce_client.send_command(
+            "auto_assemble", {"script": script, "allow_unsafe": allow_unsafe}
+        )
+    )
 
 
 @mcp.tool()

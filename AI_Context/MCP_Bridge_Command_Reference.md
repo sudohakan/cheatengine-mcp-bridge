@@ -33,7 +33,7 @@
 ```json
 {
   "success": true,
-  "version": "11.3.1",
+  "version": "11.4.0",
   "timestamp": 1733540000,
   "message": "CE MCP Bridge alive"
 }
