@@ -155,7 +155,9 @@ _DANGEROUS_LUA_PATTERNS = (
 
 
 def _contains_dangerous_lua(code: str) -> bool:
-    return any(re.search(pattern, code, re.IGNORECASE) for pattern in _DANGEROUS_LUA_PATTERNS)
+    return any(
+        re.search(pattern, code, re.IGNORECASE) for pattern in _DANGEROUS_LUA_PATTERNS
+    )
 
 
 # ============================================================================
@@ -689,6 +691,7 @@ def evaluate_lua(code: str, allow_unsafe: bool = False) -> str:
             "evaluate_lua", {"code": code, "allow_unsafe": allow_unsafe}
         )
     )
+
 
 @mcp.tool()
 def auto_assemble(script: str, allow_unsafe: bool = False) -> str:
