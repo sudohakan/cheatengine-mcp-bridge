@@ -14,3 +14,6 @@ Thumbs.db
 nul
 *.exe
 *.dll
+
+# graphify knowledge-graph output (tool artifact)
+graphify-out/
