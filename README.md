@@ -12,16 +12,16 @@
 [![Python](https://img.shields.io/badge/python-3.12+-brightgreen?style=flat-square)](https://python.org)
 [![Lua](https://img.shields.io/badge/lua-5.4+-blue?style=flat-square)](https://www.lua.org)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-36%2F37_passing-brightgreen?style=flat-square)](#test-suite)
+[![Tests](https://img.shields.io/badge/tests-36%2F37_passing-brightgreen?style=flat-square)](#development)
 [![Stars](https://img.shields.io/github/stars/sudohakan/cheatengine-mcp-bridge?style=flat-square)](https://github.com/sudohakan/cheatengine-mcp-bridge/stargazers)
 
-[Quick Start](#quick-start) &middot; [Features](#features) &middot; [Commands](#commands) &middot; [Architecture](#architecture) &middot; [Contributing](CONTRIBUTING.md)
+[Quick Start](#install) &middot; [Features](#features) &middot; [Commands](#usage) &middot; [Architecture](#architecture) &middot; [Contributing](CONTRIBUTING.md)
 
 </div>
 
 ---
 
-## Why Cheat Engine MCP Bridge?
+## What it does
 
 > Reverse engineering is manual, tedious, and requires deep domain expertise. What if an AI agent could read process memory, set hardware breakpoints, trace execution at hypervisor level, and analyze structures: all through clean, typed API calls?
 
@@ -39,7 +39,7 @@ Cheat Engine MCP Bridge connects [Cheat Engine](https://www.cheatengine.org/) to
 
 ---
 
-## Quick Start
+## Install
 
 **3 steps to get an AI agent reversing your target process:**
 
@@ -163,19 +163,7 @@ Dependencies:
 
 ---
 
-## Configuration
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PIPE_NAME` | `\\.\pipe\CE_MCP_Bridge_v99` | Named Pipe identifier: must match the Lua script |
-| `MCP_SERVER_NAME` | `cheatengine` | MCP server name exposed to clients |
-| `max_retries` | `2` | Auto-reconnect attempts on pipe failure |
-
-To use a custom pipe name, update both `PIPE_NAME` in `mcp_cheatengine.py` and `PIPE_NAME` in `ce_mcp_bridge.lua`.
-
----
-
-## Commands
+## Usage
 
 The bridge exposes **43 MCP tools** organized by category. See [AI_Context/MCP_Bridge_Command_Reference.md](AI_Context/MCP_Bridge_Command_Reference.md) for full parameter documentation with examples.
 
@@ -268,6 +256,18 @@ The bridge exposes **43 MCP tools** organized by category. See [AI_Context/MCP_B
 
 ---
 
+## Configuration
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PIPE_NAME` | `\\.\pipe\CE_MCP_Bridge_v99` | Named Pipe identifier: must match the Lua script |
+| `MCP_SERVER_NAME` | `cheatengine` | MCP server name exposed to clients |
+| `max_retries` | `2` | Auto-reconnect attempts on pipe failure |
+
+To use a custom pipe name, update both `PIPE_NAME` in `mcp_cheatengine.py` and `PIPE_NAME` in `ce_mcp_bridge.lua`.
+
+---
+
 ## Architecture
 
 ```mermaid
@@ -328,7 +328,7 @@ cheatengine-mcp-bridge/
 
 ---
 
-## Test Suite
+## Development
 
 ```bash
 python MCP_Server/test_mcp.py

@@ -17,3 +17,7 @@ nul
 
 # graphify knowledge-graph output (tool artifact)
 graphify-out/
+.env.*
+*.pem
+*.key
+credentials*
