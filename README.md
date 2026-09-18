@@ -23,7 +23,7 @@
 
 ## What it does
 
-> Reverse engineering is manual, tedious, and requires deep domain expertise. What if an AI agent could read process memory, set hardware breakpoints, trace execution at hypervisor level, and analyze structures: all through clean, typed API calls?
+Reverse engineering is manual work that needs deep domain expertise. This bridge hands an AI agent the same primitives through typed API calls: reading process memory, setting hardware breakpoints, tracing execution at hypervisor level, and dissecting structures.
 
 Cheat Engine MCP Bridge connects [Cheat Engine](https://www.cheatengine.org/) to AI agents (Claude, Cursor, Copilot, etc.) via the [Model Context Protocol](https://modelcontextprotocol.io/). A Lua script inside Cheat Engine creates a Named Pipe server; a Python MCP server translates tool calls to JSON-RPC commands over that pipe. AI agents never interact with Cheat Engine directly.
 
@@ -36,33 +36,6 @@ Cheat Engine MCP Bridge connects [Cheat Engine](https://www.cheatengine.org/) to
 | **Auto-reconnect** | Python client reconnects after CE restarts |
 
 > **Platform**: Windows only. Requires Cheat Engine 7.x attached to a target process.
-
----
-
-## Install
-
-**3 steps to get an AI agent reversing your target process:**
-
-**1.** Load the Lua bridge in Cheat Engine: open `ce_mcp_bridge.lua` via the Lua script editor and run it.
-
-**2.** Add the MCP server to your AI agent config:
-
-```json
-{
-  "mcpServers": {
-    "cheatengine": {
-      "command": "python",
-      "args": ["C:/path/to/MCP_Server/mcp_cheatengine.py"]
-    }
-  }
-}
-```
-
-**3.** Verify the connection:
-
-```
-ping() to verify, then get_process_info() to confirm the target.
-```
 
 ---
 
@@ -83,7 +56,21 @@ ping() to verify, then get_process_info() to confirm the target.
 
 ---
 
-## Installation
+## Install
+
+**3 steps to get an AI agent reversing your target process:**
+
+**1.** Load the Lua bridge in Cheat Engine: open `ce_mcp_bridge.lua` via the Lua script editor and run it.
+
+**2.** Add the MCP server to your AI agent config (see **MCP Client Configuration** below for Claude Desktop, Claude Code and Cursor).
+
+**3.** Verify the connection:
+
+```
+ping() to verify, then get_process_info() to confirm the target.
+```
+
+---
 
 <details>
 <summary><strong>Prerequisites</strong></summary>
@@ -311,7 +298,7 @@ flowchart TD
 cheatengine-mcp-bridge/
   MCP_Server/
     mcp_cheatengine.py        # Python MCP server (FastMCP, 43 tools)
-    ce_mcp_bridge.lua          # Lua bridge for Cheat Engine (v11.4.0, 2333 lines)
+    ce_mcp_bridge.lua          # Lua bridge for Cheat Engine (Named Pipe JSON-RPC)
     test_mcp.py                # Test suite (36/37 tests passing)
     requirements.txt           # Python dependencies
   AI_Context/
